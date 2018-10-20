@@ -21,7 +21,7 @@ private val random = Random()
 @Location("/detector/{playerId}")
 data class BoostDetectionRequest(val playerId: Int)
 
-fun main(args: Array<String>) {
+fun main() {
     embeddedServer(Netty, 8080) {
         install(Locations)
         install(CallLogging) {
