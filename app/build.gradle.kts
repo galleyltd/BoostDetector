@@ -65,6 +65,8 @@ dependencies {
     implementation("io.ktor", "ktor-locations", ktorVersion)
     implementation("io.ktor", "ktor-jackson", ktorVersion)
     implementation("io.ktor", "ktor-auth", ktorVersion)
+    implementation("io.ktor", "ktor-client-apache", ktorVersion)
+    implementation("io.ktor", "ktor-client-jackson", ktorVersion)
 
     implementation("ch.qos.logback", "logback-classic", logbackVersion)
 

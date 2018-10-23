@@ -1,22 +1,28 @@
 package com.github.galleyltd.boost
 
 import com.fasterxml.jackson.databind.SerializationFeature
-import io.ktor.server.netty.*
-import io.ktor.routing.*
-import io.ktor.application.*
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.get
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
-import io.ktor.http.*
+import io.ktor.http.ContentType
 import io.ktor.jackson.jackson
 import io.ktor.locations.Location
 import io.ktor.locations.Locations
 import io.ktor.locations.get
-import io.ktor.response.*
-import io.ktor.server.engine.*
+import io.ktor.response.respondText
+import io.ktor.routing.get
+import io.ktor.routing.routing
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import io.swagger.client.apis.MatchesApi
 import io.swagger.client.infrastructure.ClientException
 import io.swagger.client.infrastructure.ServerException
-import io.swagger.client.models.Inline_response_200
 import org.slf4j.event.Level
 import java.util.*
 
@@ -38,6 +44,14 @@ fun main() {
         }
         routing {
             get<BoostDetectionRequest> { boostDetectionRequest ->
+                val client = HttpClient(Apache) {
+                    install(JsonFeature) {
+                        serializer = JacksonSerializer()
+                    }
+                }
+                val matchData = client.get<MatchData>("https://api.opendota.com/api/matches/271145478")
+                println(matchData)
+
                 call.respondText(
                     "probability that player, id=${boostDetectionRequest.playerId} is booster = ${random.nextDouble()}",
                     ContentType.Text.Html
