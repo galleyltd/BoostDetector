@@ -1,2 +1,2 @@
-includeBuild("od-api")
-includeBuild("app")
+rootProject.buildFileName = "build.gradle.kts"
+rootProject.name = "BoostDetector"
