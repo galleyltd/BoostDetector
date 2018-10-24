@@ -51,6 +51,7 @@ repositories {
     maven("https://kotlin.bintray.com/ktor")
     maven("https://kotlin.bintray.com/kotlin-eap")
     maven("https://kotlin.bintray.com/kotlin-dev")
+    maven("https://kotlin.bintray.com/kotlinx")
 }
 
 val ktorVersion: String by project
