@@ -57,7 +57,6 @@ val ktorVersion: String by project
 val logbackVersion: String by project
 val junit5Version: String by project
 val hamkrestVersion: String by project
-val kotlinxCoroutinesVersion: String by project
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -71,7 +70,6 @@ dependencies {
     implementation("io.ktor", "ktor-client-apache", ktorVersion)
     implementation("io.ktor", "ktor-client-jackson", ktorVersion)
 
-    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", kotlinxCoroutinesVersion)
     implementation("ch.qos.logback", "logback-classic", logbackVersion)
 
     testImplementation("io.ktor", "ktor-server-tests", ktorVersion)
