@@ -2,6 +2,9 @@ package com.github.galleyltd.boost
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.github.galleyltd.boost.opendota.OpenDotaApiClient
+import com.github.galleyltd.boost.opendota.dto.MatchData
+import com.github.galleyltd.boost.storage.RedisStorageClient
+import io.ktor.application.ApplicationStopped
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
@@ -30,6 +33,8 @@ data class BoostDetectionRequest(val playerId: Int)
 data class MatchDataRequest(val matchId: String)
 
 fun main() {
+    RedisStorageClient.connect()
+
     embeddedServer(Netty, 8080) {
         install(Locations)
         install(CallLogging) {
@@ -55,9 +60,16 @@ fun main() {
                 if (matchData == null) {
                     call.respond(HttpStatusCode.InternalServerError)
                 } else {
-                    call.respond(matchData)
+                    RedisStorageClient.setKeyValue("test", matchData)
+                    val redisMatchData = RedisStorageClient.getKeyValue<MatchData>("test")
+                    if (redisMatchData != null) call.respond(redisMatchData) else call.respond(matchData)
                 }
             }
         }
+
+        environment.monitor.subscribe(ApplicationStopped) {
+            RedisStorageClient.disconnect()
+        }
+
     }.start(wait = true)
 }

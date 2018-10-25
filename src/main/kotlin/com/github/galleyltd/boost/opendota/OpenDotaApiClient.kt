@@ -31,7 +31,7 @@ object OpenDotaApiClient {
             engine {
                 customizeClient {
                     // Apache's HttpAsyncClientBuilder
-                    setProxy(HttpHost(proxyHost, proxyPort))
+//                    setProxy(HttpHost(proxyHost, proxyPort))
                 }
             }
             install(JsonFeature) {
