@@ -1,19 +1,18 @@
 package com.github.galleyltd.boost.storage
 
-import com.fasterxml.jackson.databind.MapperFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import io.lettuce.core.*
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.lettuce.core.RedisClient
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 
 object RedisStorageClient {
     private val client = RedisClient.create("redis://localhost:6379/0")
-    val objectMapper = ObjectMapper()
-        .enable(MapperFeature.USE_ANNOTATIONS)
+    val objectMapper = jacksonObjectMapper()
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-    private var connection: StatefulRedisConnection<String, String>? = null
-    private var pubSubConnection: StatefulRedisPubSubConnection<String, String>? = null
+    private lateinit var connection: StatefulRedisConnection<String, String>
+    private lateinit var pubSubConnection: StatefulRedisPubSubConnection<String, String>
 
     fun connect() {
         connection = client.connect()
@@ -21,13 +20,13 @@ object RedisStorageClient {
     }
 
     fun disconnect() {
-        connection?.close()
-        pubSubConnection?.close()
+        connection.close()
+        pubSubConnection.close()
         client.shutdown()
     }
 
     fun setKeyValue(key: String, value: String) {
-        connection?.sync()?.set(key, value)
+        connection.sync().set(key, value)
     }
 
     inline fun <reified T> setKeyValue(key: String, value: T) {
@@ -36,14 +35,11 @@ object RedisStorageClient {
     }
 
     fun getKeyValue(key: String) : String? {
-        return connection?.sync()?.get(key)
+        return connection.sync().get(key)
     }
 
     inline fun <reified T> getKeyValue(key: String) : T? {
         val contentValue: String? = getKeyValue(key)
-        if (contentValue != null) {
-            return objectMapper.readValue(contentValue, T::class.java)
-        }
-        return null
+        return contentValue?.let { objectMapper.readValue(contentValue, T::class.java) }
     }
 }
