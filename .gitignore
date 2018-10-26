@@ -3,5 +3,4 @@ build
 *.iml
 .gradle
 .idea
-.keep
-.swagger-codegen-ignore
+.env
