@@ -15,6 +15,8 @@ import io.ktor.locations.Location
 import io.ktor.locations.Locations
 import io.ktor.locations.get
 import io.ktor.response.respond
+import io.ktor.response.respondText
+import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -24,8 +26,6 @@ import org.slf4j.event.Level
 data class MatchDataRequest(val matchId: String)
 
 fun main() {
-    RedisStorageClient.connect()
-
     embeddedServer(Netty, 8080) {
         install(Locations)
         install(CallLogging) {
@@ -37,6 +37,10 @@ fun main() {
             }
         }
         routing {
+            get("/") {
+                call.respondText { "Hello world" }
+            }
+
             get<MatchDataRequest> { matchDataRequest ->
                 var matchData = RedisStorageClient.getKeyValue<MatchData>("test")
                 if (matchData == null) {
@@ -54,6 +58,7 @@ fun main() {
             }
         }
 
+        RedisStorageClient.connect()
         environment.monitor.subscribe(ApplicationStopped) {
             RedisStorageClient.disconnect()
         }

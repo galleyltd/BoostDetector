@@ -11,7 +11,19 @@ services:
       - '--save 60 10000'
       - '--maxmemory ${REDIS_MAXMEM:-50mb}'
       - '--maxmemory-policy ${REDIS_POLICY:-noeviction}'
+    restart: always
     volumes:
       - ${REDIS_VOLUME}:/data
     ports:
       - "6379:6379"
+
+  backend:
+    build: .
+    image: boost-detector
+    restart: always
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    ports:
+      - "80:8080"
