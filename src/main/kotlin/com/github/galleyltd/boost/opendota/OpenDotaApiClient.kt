@@ -24,7 +24,6 @@ object OpenDotaApiClient {
     private val httpClient = createHttpClient(PROXY_LIST[0].first, PROXY_LIST[0].second)
 
     private fun createHttpClient(proxyHost: String, proxyPort: Int): HttpClient {
-
         return HttpClient(Apache) {
             engine {
                 customizeClient {

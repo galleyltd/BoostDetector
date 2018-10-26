@@ -3,10 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
-        jcenter()
-        maven("https://kotlin.bintray.com/ktor")
         maven("https://kotlin.bintray.com/kotlin-eap")
-        maven("https://kotlin.bintray.com/kotlin-dev")
         maven("https://plugins.gradle.org/m2/")
     }
     dependencies {
@@ -46,11 +43,10 @@ tasks.withType<Test> {
 }
 
 repositories {
-    //mavenLocal()
+    mavenLocal()
     jcenter()
     maven("https://kotlin.bintray.com/ktor")
     maven("https://kotlin.bintray.com/kotlin-eap")
-    maven("https://kotlin.bintray.com/kotlin-dev")
     maven("https://kotlin.bintray.com/kotlinx")
 }
 
