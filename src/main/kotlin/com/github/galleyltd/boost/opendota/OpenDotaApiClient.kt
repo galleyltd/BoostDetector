@@ -10,11 +10,9 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import kotlinx.coroutines.delay
-import org.apache.http.HttpHost
 import java.io.File
 
 object OpenDotaApiClient {
-
     private val PROXY_LIST =
         File(this::class.java.classLoader.getResource("proxies").toURI()).useLines { it.toList() }.map {
             val z = it.trim().split("\t")
@@ -31,7 +29,7 @@ object OpenDotaApiClient {
             engine {
                 customizeClient {
                     // Apache's HttpAsyncClientBuilder
-                    setProxy(HttpHost(proxyHost, proxyPort))
+//                    setProxy(HttpHost(proxyHost, proxyPort))
                 }
             }
             install(JsonFeature) {
