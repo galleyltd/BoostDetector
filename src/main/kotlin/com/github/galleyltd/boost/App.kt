@@ -1,8 +1,8 @@
 package com.github.galleyltd.boost
 
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.github.galleyltd.boost.opendota.OpenDotaApiClient
 import com.github.galleyltd.boost.opendota.dto.MatchData
+import com.github.galleyltd.boost.opendota.http.OpenDotaApiClient
 import com.github.galleyltd.boost.storage.RedisStorageClient
 import io.ktor.application.ApplicationStopped
 import io.ktor.application.call
