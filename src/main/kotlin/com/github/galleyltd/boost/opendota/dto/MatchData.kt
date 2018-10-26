@@ -3,30 +3,31 @@ package com.github.galleyltd.boost.opendota.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class MatchData(
-        @JsonProperty("match_id") val matchId: String?,
-        @JsonProperty("cluster") val cluster: Int?,
-        @JsonProperty("dire_score") val direScore: Int?,
-        @JsonProperty("duration") val duration: Int?,
-        @JsonProperty("game_mode") val gameMode: Int?,
-        @JsonProperty("match_seq_num") val matchSeqNum: String?,
-        @JsonProperty("negative_votes") val negativeVotes: Int?,
-        @JsonProperty("positive_votes") val positiveVotes: Int?,
-        @JsonProperty("radiant_gold_adv") val radiantGoldAdv: List<Any?>?,
-        @JsonProperty("radiant_score") val radiantScore: Int?,
-        @JsonProperty("radiant_win") val radiantWin: Boolean?,
-        @JsonProperty("radiant_xp_adv") val radiantXpAdv: List<Any?>?,
-        @JsonProperty("skill") val skill: Any?,
-        @JsonProperty("start_time") val startTime: Int?,
-        @JsonProperty("teamfights") val teamfights: List<Any?>?,
-        @JsonProperty("tower_status_dire") val towerStatusDire: Int?,
-        @JsonProperty("tower_status_radiant") val towerStatusRadiant: Int?,
-        @JsonProperty("version") val version: Int?,
-        @JsonProperty("players") val players: List<Player?>?,
-        @JsonProperty("patch") val patch: Int?,
-        @JsonProperty("region") val region: Int?,
-        @JsonProperty("comeback") val comeback: Any?,
-        @JsonProperty("stomp") val stomp: Any?,
-        @JsonProperty("replay_url") val replayUrl: String?
+    @JsonProperty("match_id") val matchId: String?,
+    @JsonProperty("cluster") val cluster: Int?,
+    @JsonProperty("dire_score") val direScore: Int?,
+    @JsonProperty("duration") val duration: Int?,
+    @JsonProperty("game_mode") val gameMode: Int?,
+    @JsonProperty("match_seq_num") val matchSeqNum: String?,
+    @JsonProperty("negative_votes") val negativeVotes: Int?,
+    @JsonProperty("positive_votes") val positiveVotes: Int?,
+    @JsonProperty("radiant_gold_adv") val radiantGoldAdv: List<Any?>?,
+    @JsonProperty("radiant_score") val radiantScore: Int?,
+    @JsonProperty("radiant_win") val radiantWin: Boolean?,
+    @JsonProperty("radiant_xp_adv") val radiantXpAdv: List<Any?>?,
+    @JsonProperty("skill") val skill: Any?,
+    @JsonProperty("start_time") val startTime: Int?,
+    @JsonProperty("teamfights") val teamfights: List<Any?>?,
+    @JsonProperty("tower_status_dire") val towerStatusDire: Int?,
+    @JsonProperty("tower_status_radiant") val towerStatusRadiant: Int?,
+    @JsonProperty("version") val version: Int?,
+    @JsonProperty("players") val players: List<Player?>?,
+    @JsonProperty("patch") val patch: Int?,
+    @JsonProperty("region") val region: Int?,
+    @JsonProperty("comeback") val comeback: Any?,
+    @JsonProperty("stomp") val stomp: Any?,
+    @JsonProperty("replay_url") val replayUrl: String?,
+    @JsonProperty("chat") val chat: List<Chat?>?
 )
 
 data class Player(
@@ -187,4 +188,11 @@ data class MaxHeroHit(
 
 data class Purchase(
     @JsonProperty("dust") val dust: Any?
+)
+
+data class Chat(
+    @JsonProperty("time") val time: Int?,
+    @JsonProperty("type") val type: String?,
+    @JsonProperty("unit") val unit: String?,
+    @JsonProperty("key") val key: String?
 )
