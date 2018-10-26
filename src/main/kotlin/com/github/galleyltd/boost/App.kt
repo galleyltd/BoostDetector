@@ -38,13 +38,18 @@ fun main() {
         }
         routing {
             get<MatchDataRequest> { matchDataRequest ->
-                val matchData = OpenDotaApiClient.getMatchData(matchDataRequest.matchId)
+                var matchData = RedisStorageClient.getKeyValue<MatchData>("test")
+                if (matchData == null) {
+                    matchData = OpenDotaApiClient.getMatchData(matchDataRequest.matchId)
+                    matchData?.let {
+                        RedisStorageClient.setKeyValue("test", matchData)
+                    }
+                }
+
                 if (matchData == null) {
                     call.respond(HttpStatusCode.InternalServerError)
                 } else {
-                    RedisStorageClient.setKeyValue("test", matchData)
-                    val redisMatchData = RedisStorageClient.getKeyValue<MatchData>("test")
-                    if (redisMatchData != null) call.respond(redisMatchData) else call.respond(matchData)
+                    call.respond(matchData)
                 }
             }
         }
