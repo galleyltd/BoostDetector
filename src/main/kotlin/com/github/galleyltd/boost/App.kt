@@ -15,8 +15,6 @@ import io.ktor.locations.Location
 import io.ktor.locations.Locations
 import io.ktor.locations.get
 import io.ktor.response.respond
-import io.ktor.response.respondText
-import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -37,10 +35,6 @@ fun main() {
             }
         }
         routing {
-            get("/") {
-                call.respondText { "Hello world" }
-            }
-
             get<MatchDataRequest> { matchDataRequest ->
                 var matchData = RedisStorageClient.getKeyValue<MatchData>("test")
                 if (matchData == null) {

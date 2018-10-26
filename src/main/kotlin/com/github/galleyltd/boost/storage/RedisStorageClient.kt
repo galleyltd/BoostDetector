@@ -2,13 +2,13 @@ package com.github.galleyltd.boost.storage
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.ktor.application.ApplicationEnvironment
 import io.lettuce.core.RedisClient
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 
 object RedisStorageClient {
-    val objectMapper = jacksonObjectMapper()
+    @PublishedApi
+    internal val objectMapper = jacksonObjectMapper()
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
     private lateinit var client: RedisClient
@@ -17,7 +17,7 @@ object RedisStorageClient {
 
     fun connect() {
         val redisHost = System.getenv("REDIS_HOST") ?: "localhost"
-        client = RedisClient.create("redis://${redisHost}:6379/0")
+        client = RedisClient.create("redis://$redisHost:6379/0")
         connection = client.connect()
         pubSubConnection = client.connectPubSub()
     }
