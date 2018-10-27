@@ -13,8 +13,7 @@ import org.koin.standalone.StandAloneContext
 import org.koin.standalone.inject
 
 private val appModule = module {
-    val objectMapper = jacksonObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-    single { objectMapper }
+    single { jacksonObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) }
     module("http") {
         single { ExecutionCounter() }
         single { HttpClientFactory(get()) }
