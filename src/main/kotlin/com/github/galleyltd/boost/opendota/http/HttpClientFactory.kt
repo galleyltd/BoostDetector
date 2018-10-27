@@ -11,7 +11,6 @@ import java.util.*
 object HttpClientFactory {
     private const val changesBeforeNoProxy = 5
     private var currentChanges = 0
-    private var currentProxyPosition = 0
 
     private val proxyList: List<Pair<String, Int>> =
         File(this::class.java.classLoader.getResource("proxies").toURI()).useLines { it.toList() }.map {
@@ -19,7 +18,7 @@ object HttpClientFactory {
             Pair(proxyDefinition[0], proxyDefinition[1].toInt())
         }
 
-    private val proxyJump = 1 + Random().nextInt(proxyList.size - 1)
+    private var currentProxyPosition = Random().nextInt(proxyList.size)
 
     fun nextHttpClient(): HttpClient {
         if (currentChanges == 0) {
@@ -32,7 +31,7 @@ object HttpClientFactory {
         } else {
             currentChanges++
             if (currentChanges == changesBeforeNoProxy) currentChanges = 0
-            currentProxyPosition = (currentProxyPosition + proxyJump) % proxyList.size
+            currentProxyPosition = (currentProxyPosition + 1) % proxyList.size
             return HttpClient(Apache) {
                 engine {
                     customizeClient {
