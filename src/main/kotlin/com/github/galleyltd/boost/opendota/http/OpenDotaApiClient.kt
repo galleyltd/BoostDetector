@@ -8,12 +8,12 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpStatusCode
 
-object OpenDotaApiClient {
-    private const val BASE_URL = "https://api.opendota.com/api"
+private const val BASE_URL = "https://api.opendota.com/api"
 
-    private var httpClient: HttpClient = HttpClientFactory.nextHttpClient()
+class OpenDotaApiClient(private val httpClientFactory: HttpClientFactory) {
+    private var httpClient: HttpClient = httpClientFactory.nextHttpClient()
 
-    suspend fun getMatchData(matchId: String): MatchData? {
+    suspend fun getMatchData(matchId: String): MatchData {
         return performApiCall {
             httpClient.get<MatchData>("$BASE_URL/matches/$matchId")
         }
@@ -23,7 +23,7 @@ object OpenDotaApiClient {
         steamAccountId: String,
         limit: Int = 200,
         offset: Int = 0
-    ): List<MatchPreviewData>? {
+    ): List<MatchPreviewData> {
         return performApiCall {
             httpClient.get<List<MatchPreviewData>>("$BASE_URL/players/$steamAccountId/matches") {
                 parameter("limit", limit)
@@ -32,13 +32,13 @@ object OpenDotaApiClient {
         }
     }
 
-    private suspend fun <T> performApiCall(action: suspend () -> T): T? {
+    private suspend fun <T> performApiCall(action: suspend () -> T): T {
         while (true) {
             try {
                 return action()
             } catch (e: BadResponseStatus) {
                 if (e.statusCode.value == HttpStatusCode.TooManyRequests.value) {
-                    httpClient = HttpClientFactory.nextHttpClient()
+                    httpClient = httpClientFactory.nextHttpClient()
                 } else {
                     throw e
                 }

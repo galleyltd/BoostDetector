@@ -55,6 +55,7 @@ val logbackVersion: String by project
 val junit5Version: String by project
 val hamkrestVersion: String by project
 val lettuceVersion: String by project
+val koinKtorVersion: String by project
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -64,9 +65,10 @@ dependencies {
     implementation("io.ktor", "ktor-server-core", ktorVersion)
     implementation("io.ktor", "ktor-locations", ktorVersion)
     implementation("io.ktor", "ktor-jackson", ktorVersion)
-    implementation("io.ktor", "ktor-auth", ktorVersion)
     implementation("io.ktor", "ktor-client-apache", ktorVersion)
     implementation("io.ktor", "ktor-client-jackson", ktorVersion)
+
+    implementation("org.koin", "koin-ktor", koinKtorVersion)
 
     implementation("io.lettuce", "lettuce-core", lettuceVersion)
     implementation("ch.qos.logback", "logback-classic", logbackVersion)
