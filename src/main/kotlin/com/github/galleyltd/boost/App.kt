@@ -1,15 +1,13 @@
 package com.github.galleyltd.boost
 
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.github.galleyltd.boost.opendota.OpenDotaApiClient
+import com.github.galleyltd.boost.di.KoinContainer
 import com.github.galleyltd.boost.opendota.dto.MatchData
-import com.github.galleyltd.boost.storage.RedisStorageClient
 import io.ktor.application.ApplicationStopped
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
-import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
 import io.ktor.locations.Location
 import io.ktor.locations.Locations
@@ -24,6 +22,10 @@ import org.slf4j.event.Level
 data class MatchDataRequest(val matchId: String)
 
 fun main() {
+    val koinContainer = KoinContainer().also { it.init() }
+    val redisStorageClient = koinContainer.redisStorageClient
+    val openDotaApiClient = koinContainer.openDotaApiClient
+
     embeddedServer(Netty, 8080) {
         install(Locations)
         install(CallLogging) {
@@ -36,26 +38,17 @@ fun main() {
         }
         routing {
             get<MatchDataRequest> { matchDataRequest ->
-                var matchData = RedisStorageClient.getKeyValue<MatchData>("test")
+                var matchData = redisStorageClient.getKeyValue<MatchData>("test")
                 if (matchData == null) {
-                    matchData = OpenDotaApiClient.getMatchData(matchDataRequest.matchId)
-                    matchData?.let {
-                        RedisStorageClient.setKeyValue("test", matchData)
+                    matchData = openDotaApiClient.getMatchData(matchDataRequest.matchId)
+                    redisStorageClient.setKeyValue("test", matchData)
                     }
-                }
-
-                if (matchData == null) {
-                    call.respond(HttpStatusCode.InternalServerError)
-                } else {
                     call.respond(matchData)
                 }
             }
-        }
 
-        RedisStorageClient.connect()
         environment.monitor.subscribe(ApplicationStopped) {
-            RedisStorageClient.disconnect()
+            koinContainer.tearDown()
         }
-
     }.start(wait = true)
 }

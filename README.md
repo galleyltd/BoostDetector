@@ -3,7 +3,7 @@
 
 ### Redis startup
 ```bash
-docker-compose run --service-ports redis
+docker-compose run -d --service-ports redis
 ```
 
 ### Complete startup
