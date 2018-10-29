@@ -3,9 +3,11 @@ package com.github.galleyltd.boost
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.github.galleyltd.boost.di.KoinContainer
 import com.github.galleyltd.boost.opendota.dto.MatchData
+import com.typesafe.config.ConfigFactory
 import io.ktor.application.ApplicationStopped
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.config.HoconApplicationConfig
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.jackson.jackson
@@ -26,7 +28,9 @@ fun main() {
     val redisStorageClient = koinContainer.redisStorageClient
     val openDotaApiClient = koinContainer.openDotaApiClient
 
-    embeddedServer(Netty, 8080) {
+    val config = HoconApplicationConfig(ConfigFactory.load())
+
+    embeddedServer(Netty, config.propertyOrNull("ktor.deployment.port")?.getString()?.toInt() ?: 8080) {
         install(Locations)
         install(CallLogging) {
             level = Level.INFO
@@ -42,10 +46,10 @@ fun main() {
                 if (matchData == null) {
                     matchData = openDotaApiClient.getMatchData(matchDataRequest.matchId)
                     redisStorageClient.setKeyValue("test", matchData)
-                    }
-                    call.respond(matchData)
                 }
+                call.respond(matchData)
             }
+        }
 
         environment.monitor.subscribe(ApplicationStopped) {
             koinContainer.tearDown()
