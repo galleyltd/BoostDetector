@@ -10,7 +10,7 @@ Run App.kt from your favourite IDE
 
 ### Complete startup
 ```bash
-./gradlew clean shadowJar
+./gradlew clean build
 docker-compose build
 docker-compose up -d
 ```
