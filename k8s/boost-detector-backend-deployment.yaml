@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    io.kompose.service: boost-detector-backend
+    app: boost-detector-backend
   name: boost-detector-backend
 spec:
   replicas: 1
@@ -11,7 +11,7 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        io.kompose.service: boost-detector-backend
+        app: boost-detector-backend
     spec:
       containers:
       - env:
