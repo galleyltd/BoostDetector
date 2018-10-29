@@ -24,9 +24,9 @@ import org.slf4j.event.Level
 @Location("/match/{matchId}")
 data class MatchDataRequest(val matchId: String)
 
-val koinContainer = KoinContainer().also { it.init() }
-val redisStorageClient = koinContainer.redisStorageClient
-val openDotaApiClient = koinContainer.openDotaApiClient
+private val koinContainer = KoinContainer().also { it.init() }
+private val redisStorageClient = koinContainer.redisStorageClient
+private val openDotaApiClient = koinContainer.openDotaApiClient
 
 fun main() {
 
