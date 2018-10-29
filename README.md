@@ -9,6 +9,5 @@ docker-compose run -d --service-ports redis
 ### Complete startup
 ```bash
 ./gradlew build
-docker-compose build
-docker-compose up -d
+docker-compose up -d --build
 ```

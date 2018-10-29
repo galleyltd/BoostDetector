@@ -17,7 +17,7 @@ class HttpClientFactory(private val executionCounter: ExecutionCounter) {
         }
     )
     private val proxyList: List<Pair<String, Int>> =
-        File(this::class.java.classLoader.getResource("proxies").toURI()).useLines { it.toList() }.map {
+        this::class.java.classLoader.getResourceAsStream("proxies").bufferedReader().useLines { it.toList() }.map {
             val proxyDefinition = it.trim().split("\t")
             Pair(proxyDefinition[0], proxyDefinition[1].toInt())
         }

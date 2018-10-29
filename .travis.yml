@@ -1,8 +1,30 @@
+sudo: required
+
+addons:
+  apt:
+    sources: 
+      - sourceline: 'deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ trusty main'
+        key_url: 'https://packages.microsoft.com/keys/microsoft.asc'
+    packages:
+      - apt-transport-https
+      - azure-cli
+
 language: java
+
 jdk:
   - oraclejdk8
+
 before_install:
   - chmod +x gradlew
+  - chmod +x deploy-k8s.sh
+
 script:
   - ./gradlew test build
+
+deploy:
+  - provider: script
+    script: ./deploy-k8s.sh
+    skip_cleanup: true
+    on:
+      branch: master
   

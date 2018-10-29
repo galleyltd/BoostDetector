@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: boost-detector-backend
+  name: boost-detector-backend
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: boost-detector-backend
+    spec:
+      containers:
+      - env:
+        - name: REDIS_HOST
+          value: redis
+        image: galleyltd/boost-detector-backend
+        name: boost-detector-backend
+        ports:
+        - containerPort: 8080
+        resources: {}
+      restartPolicy: Always
+status: {}
