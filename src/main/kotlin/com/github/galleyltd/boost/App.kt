@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.github.galleyltd.boost.di.KoinContainer
 import com.github.galleyltd.boost.opendota.dto.MatchData
 import com.typesafe.config.ConfigFactory
+import io.ktor.application.Application
 import io.ktor.application.ApplicationStopped
 import io.ktor.application.call
 import io.ktor.application.install
@@ -23,36 +24,43 @@ import org.slf4j.event.Level
 @Location("/match/{matchId}")
 data class MatchDataRequest(val matchId: String)
 
+val koinContainer = KoinContainer().also { it.init() }
+val redisStorageClient = koinContainer.redisStorageClient
+val openDotaApiClient = koinContainer.openDotaApiClient
+
 fun main() {
-    val koinContainer = KoinContainer().also { it.init() }
-    val redisStorageClient = koinContainer.redisStorageClient
-    val openDotaApiClient = koinContainer.openDotaApiClient
 
     val config = HoconApplicationConfig(ConfigFactory.load())
 
-    embeddedServer(Netty, config.propertyOrNull("ktor.deployment.port")?.getString()?.toInt() ?: 8080) {
-        install(Locations)
-        install(CallLogging) {
-            level = Level.INFO
-        }
-        install(ContentNegotiation) {
-            jackson {
-                enable(SerializationFeature.INDENT_OUTPUT)
-            }
-        }
-        routing {
-            get<MatchDataRequest> { matchDataRequest ->
-                var matchData = redisStorageClient.getKeyValue<MatchData>("test")
-                if (matchData == null) {
-                    matchData = openDotaApiClient.getMatchData(matchDataRequest.matchId)
-                    redisStorageClient.setKeyValue("test", matchData)
-                }
-                call.respond(matchData)
-            }
-        }
+    embeddedServer(
+        Netty,
+        8080,
+        module = Application::mymodule
+    ).start(wait = true)
+}
 
-        environment.monitor.subscribe(ApplicationStopped) {
-            koinContainer.tearDown()
+fun Application.mymodule() {
+    install(Locations)
+    install(CallLogging) {
+        level = Level.INFO
+    }
+    install(ContentNegotiation) {
+        jackson {
+            enable(SerializationFeature.INDENT_OUTPUT)
         }
-    }.start(wait = true)
+    }
+    routing {
+        get<MatchDataRequest> { matchDataRequest ->
+            var matchData = redisStorageClient.getKeyValue<MatchData>("test")
+            if (matchData == null) {
+                matchData = openDotaApiClient.getMatchData(matchDataRequest.matchId)
+                redisStorageClient.setKeyValue("test", matchData)
+            }
+            call.respond(matchData)
+        }
+    }
+
+    environment.monitor.subscribe(ApplicationStopped) {
+        koinContainer.tearDown()
+    }
 }
