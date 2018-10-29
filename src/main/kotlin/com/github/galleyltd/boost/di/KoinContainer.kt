@@ -32,11 +32,10 @@ private val appModule = module {
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class KoinContainer : KoinComponent {
-    val config: HoconApplicationConfig
+    private val config = HoconApplicationConfig(ConfigFactory.load())
 
     init {
         StandAloneContext.startKoin(listOf(appModule))
-        config = HoconApplicationConfig(ConfigFactory.load())
     }
 
     val redisStorageClient by inject<RedisStorageClient>()
