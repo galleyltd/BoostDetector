@@ -30,8 +30,6 @@ val openDotaApiClient = koinContainer.openDotaApiClient
 
 fun main() {
 
-    val config = HoconApplicationConfig(ConfigFactory.load())
-
     embeddedServer(
         Netty,
         8080,

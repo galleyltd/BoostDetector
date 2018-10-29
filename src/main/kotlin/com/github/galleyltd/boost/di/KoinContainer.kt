@@ -6,6 +6,8 @@ import com.github.galleyltd.boost.opendota.http.HttpClientFactory
 import com.github.galleyltd.boost.opendota.http.OpenDotaApiClient
 import com.github.galleyltd.boost.service.ExecutionCounter
 import com.github.galleyltd.boost.storage.RedisStorageClient
+import com.typesafe.config.ConfigFactory
+import io.ktor.config.HoconApplicationConfig
 import io.lettuce.core.RedisClient
 import org.koin.dsl.module.module
 import org.koin.standalone.KoinComponent
@@ -37,6 +39,9 @@ class KoinContainer : KoinComponent {
     val openDotaApiClient by inject<OpenDotaApiClient>()
 
     fun init() {
+
+        val config = HoconApplicationConfig(ConfigFactory.load())
+
         redisStorageClient.connect()
     }
 
