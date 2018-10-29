@@ -32,11 +32,11 @@ class RedisStorageClient(
         setKeyValue(key, contentValue)
     }
 
-    fun getKeyValue(key: String) : String? {
+    fun getKeyValue(key: String): String? {
         return connection.sync().get(key)
     }
 
-    inline fun <reified T> getKeyValue(key: String) : T? {
+    inline fun <reified T> getKeyValue(key: String): T? {
         val contentValue: String? = getKeyValue(key)
         return contentValue?.let { objectMapper.readValue(contentValue, T::class.java) }
     }
