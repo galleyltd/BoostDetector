@@ -52,10 +52,11 @@ fun Application.boostDetectorModule() {
     routing {
         get<MatchDataRequest> { matchDataRequest ->
             val matchId = matchDataRequest.matchId
-            var matchData = redisStorageClient.getKeyValue<MatchData>(matchId)
+            val storageKey = "match$matchId"
+            var matchData = redisStorageClient.getKeyValue<MatchData>(storageKey)
             if (matchData == null) {
                 matchData = openDotaApiClient.getMatchData(matchId)
-                redisStorageClient.setKeyValue(matchId, matchData)
+                redisStorageClient.setKeyValue(storageKey, matchData)
             }
             call.respond(matchData)
         }
