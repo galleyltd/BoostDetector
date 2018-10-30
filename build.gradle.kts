@@ -3,20 +3,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
-        maven("https://kotlin.bintray.com/kotlin-eap")
         maven("https://plugins.gradle.org/m2/")
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.properties["kotlinVersion"]}")
         classpath("com.github.jengelman.gradle.plugins:shadow:${project.properties["shadowPluginVersion"]}")
     }
 }
 
-apply(plugin = "org.jetbrains.kotlin.jvm")
 apply(plugin = "com.github.johnrengelman.shadow")
 
 plugins {
     application
+    kotlin("jvm") version "1.3.0"
 }
 
 group = "com.github.galleyltd.boost"
@@ -46,7 +44,6 @@ repositories {
     mavenLocal()
     jcenter()
     maven("https://kotlin.bintray.com/ktor")
-    maven("https://kotlin.bintray.com/kotlin-eap")
     maven("https://kotlin.bintray.com/kotlinx")
 }
 

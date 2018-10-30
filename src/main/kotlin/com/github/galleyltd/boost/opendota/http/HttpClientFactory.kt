@@ -7,7 +7,6 @@ import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import org.apache.http.HttpHost
-import java.io.File
 import java.util.*
 
 class HttpClientFactory(private val executionCounter: ExecutionCounter) {
@@ -17,10 +16,14 @@ class HttpClientFactory(private val executionCounter: ExecutionCounter) {
         }
     )
     private val proxyList: List<Pair<String, Int>> =
-        this::class.java.classLoader.getResourceAsStream("proxies").bufferedReader().useLines { it.toList() }.map {
-            val proxyDefinition = it.trim().split("\t")
-            Pair(proxyDefinition[0], proxyDefinition[1].toInt())
-        }
+        this::class.java.classLoader
+            .getResourceAsStream("proxies")
+            .bufferedReader()
+            .useLines { it.toList() }
+            .map {
+                val proxyDefinition = it.trim().split("\t")
+                Pair(proxyDefinition[0], proxyDefinition[1].toInt())
+            }
 
     private var currentProxyPosition = Random().nextInt(proxyList.size)
 

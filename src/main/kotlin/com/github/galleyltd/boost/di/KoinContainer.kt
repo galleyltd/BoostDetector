@@ -30,18 +30,19 @@ private val appModule = module {
     }
 }
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 class KoinContainer : KoinComponent {
+    private val config = HoconApplicationConfig(ConfigFactory.load())
+
     init {
         StandAloneContext.startKoin(listOf(appModule))
     }
 
     val redisStorageClient by inject<RedisStorageClient>()
     val openDotaApiClient by inject<OpenDotaApiClient>()
+    val port: Int = config.property("ktor.deployment.port").getString().toInt()
 
     fun init() {
-
-        val config = HoconApplicationConfig(ConfigFactory.load())
-
         redisStorageClient.connect()
     }
 

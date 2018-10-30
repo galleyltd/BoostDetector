@@ -25,17 +25,17 @@ data class MatchDataRequest(val matchId: String)
 private val koinContainer = KoinContainer().also { it.init() }
 private val redisStorageClient = koinContainer.redisStorageClient
 private val openDotaApiClient = koinContainer.openDotaApiClient
+private val port = koinContainer.port
 
 fun main() {
-
     embeddedServer(
         Netty,
-        8080,
-        module = Application::mymodule
+        port,
+        module = Application::boostDetectorModule
     ).start(wait = true)
 }
 
-fun Application.mymodule() {
+fun Application.boostDetectorModule() {
     install(Locations)
     install(CallLogging) {
         level = Level.INFO
