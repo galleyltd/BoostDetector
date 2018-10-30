@@ -11,8 +11,7 @@ Run App.kt from your favourite IDE
 ### Complete startup
 ```bash
 ./gradlew clean build
-docker-compose build
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 If you want to shut down app later, run:
