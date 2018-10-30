@@ -7,6 +7,7 @@ import io.ktor.application.Application
 import io.ktor.application.ApplicationStopped
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.jackson.jackson
@@ -40,6 +41,9 @@ fun Application.boostDetectorModule() {
     install(CallLogging) {
         level = Level.INFO
     }
+    install(CORS) {
+        host("galleyltd.github.io")
+    }
     install(ContentNegotiation) {
         jackson {
             enable(SerializationFeature.INDENT_OUTPUT)
@@ -47,10 +51,12 @@ fun Application.boostDetectorModule() {
     }
     routing {
         get<MatchDataRequest> { matchDataRequest ->
-            var matchData = redisStorageClient.getKeyValue<MatchData>("test")
+            val matchId = matchDataRequest.matchId
+            val storageKey = "match$matchId"
+            var matchData = redisStorageClient.getKeyValue<MatchData>(storageKey)
             if (matchData == null) {
-                matchData = openDotaApiClient.getMatchData(matchDataRequest.matchId)
-                redisStorageClient.setKeyValue("test", matchData)
+                matchData = openDotaApiClient.getMatchData(matchId)
+                redisStorageClient.setKeyValue(storageKey, matchData)
             }
             call.respond(matchData)
         }
