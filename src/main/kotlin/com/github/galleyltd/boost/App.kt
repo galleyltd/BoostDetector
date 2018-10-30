@@ -42,7 +42,7 @@ fun Application.boostDetectorModule() {
         level = Level.INFO
     }
     install(CORS) {
-        host("galleyltd.github.io")
+        host("galleyltd.github.io", listOf("https"))
     }
     install(ContentNegotiation) {
         jackson {
