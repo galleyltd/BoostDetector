@@ -35,8 +35,9 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform {
-        includeEngines("junit-jupiter")
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
     }
 }
 
@@ -71,7 +72,9 @@ dependencies {
     implementation("ch.qos.logback", "logback-classic", logbackVersion)
 
     testImplementation("io.ktor", "ktor-server-tests", ktorVersion)
+    testImplementation("org.jetbrains.kotlin", "kotlin-test-junit", "1.3.0")
     testImplementation("com.natpryce", "hamkrest", hamkrestVersion)
     testImplementation("org.junit.jupiter", "junit-jupiter-api", junit5Version)
+    testImplementation("org.junit.jupiter", "junit-jupiter-params", junit5Version)
     testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", junit5Version)
 }

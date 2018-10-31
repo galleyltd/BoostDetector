@@ -25,6 +25,7 @@ data class MatchDataRequest(val matchId: String)
 private val koinContainer = KoinContainer().also { it.init() }
 private val redisStorageClient = koinContainer.redisStorageClient
 private val openDotaApiClient = koinContainer.openDotaApiClient
+private val analysisSerivce = koinContainer.analysisService
 private val port = koinContainer.port
 
 fun main() {
@@ -52,6 +53,7 @@ fun Application.boostDetectorModule() {
                 matchData = openDotaApiClient.getMatchData(matchDataRequest.matchId)
                 redisStorageClient.setKeyValue("test", matchData)
             }
+            println(analysisSerivce.analyse(listOf(matchData!!), 23423))
             call.respond(matchData)
         }
     }
