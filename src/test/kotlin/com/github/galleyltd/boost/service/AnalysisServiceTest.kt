@@ -41,7 +41,7 @@ class AnalysisServiceTest {
             )
         }
 
-        service.analyse(matches, 116894024)
+        service.accountFeedback(matches, 116894024)
         assertTrue(false)
     }
 }

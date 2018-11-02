@@ -53,7 +53,7 @@ fun Application.boostDetectorModule() {
                 matchData = openDotaApiClient.getMatchData(matchDataRequest.matchId)
                 redisStorageClient.setKeyValue("test", matchData)
             }
-            println(analysisSerivce.analyse(listOf(matchData!!), 23423))
+            println(analysisSerivce.accountFeedback(listOf(matchData!!), 23423))
             call.respond(matchData)
         }
     }
