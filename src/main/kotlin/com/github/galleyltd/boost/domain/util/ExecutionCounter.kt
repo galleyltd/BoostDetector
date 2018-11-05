@@ -1,4 +1,4 @@
-package com.github.galleyltd.boost.service
+package com.github.galleyltd.boost.domain.util
 
 class ExecutionCounter(private val executionsBeforeDefault: Int = 5) {
     private var executionsCount = 0

@@ -9,8 +9,11 @@ class RedisStorageClient(
     private val client: RedisClient,
     @PublishedApi internal val objectMapper: ObjectMapper
 ) {
-    private lateinit var connection: StatefulRedisConnection<String, String>
-    private lateinit var pubSubConnection: StatefulRedisPubSubConnection<String, String>
+    @PublishedApi
+    internal lateinit var connection: StatefulRedisConnection<String, String>
+
+    @PublishedApi
+    internal lateinit var pubSubConnection: StatefulRedisPubSubConnection<String, String>
 
     fun connect() {
         connection = client.connect()
@@ -23,21 +26,16 @@ class RedisStorageClient(
         client.shutdown()
     }
 
-    fun setKeyValue(key: String, value: String) {
-        connection.sync().set(key, value)
-    }
-
-    inline fun <reified T> setKeyValue(key: String, value: T) {
+    inline fun <reified T> set(key: Any, value: T) {
         val contentValue = objectMapper.writeValueAsString(value)
-        setKeyValue(key, contentValue)
+        connection.sync().set(constructKey<T>(key), contentValue)
     }
 
-    fun getKeyValue(key: String): String? {
-        return connection.sync().get(key)
-    }
-
-    inline fun <reified T> getKeyValue(key: String): T? {
-        val contentValue: String? = getKeyValue(key)
+    inline fun <reified T> get(key: Any): T? {
+        val contentValue: String? = connection.sync().get(constructKey<T>(key))
         return contentValue?.let { objectMapper.readValue(contentValue, T::class.java) }
     }
+
+    @PublishedApi
+    internal inline fun <reified T> constructKey(id: Any) = "${T::class.java.simpleName}_$id"
 }

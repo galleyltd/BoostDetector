@@ -1,7 +1,7 @@
-package com.github.galleyltd.boost.opendota.http
+package com.github.galleyltd.boost.domain.opendota.http
 
-import com.github.galleyltd.boost.opendota.dto.MatchData
-import com.github.galleyltd.boost.opendota.dto.MatchPreviewData
+import com.github.galleyltd.boost.domain.opendota.dto.MatchData
+import com.github.galleyltd.boost.domain.opendota.dto.MatchPreviewData
 import io.ktor.client.HttpClient
 import io.ktor.client.features.BadResponseStatus
 import io.ktor.client.request.get
@@ -13,14 +13,14 @@ private const val BASE_URL = "https://api.opendota.com/api"
 class OpenDotaApiClient(private val httpClientFactory: HttpClientFactory) {
     private var httpClient: HttpClient = httpClientFactory.nextHttpClient()
 
-    suspend fun getMatchData(matchId: String): MatchData {
+    suspend fun getMatchData(matchId: Long): MatchData {
         return performApiCall {
             httpClient.get<MatchData>("$BASE_URL/matches/$matchId")
         }
     }
 
     suspend fun getMatchesForPlayer(
-        steamAccountId: String,
+        steamAccountId: Long,
         limit: Int = 200,
         offset: Int = 0
     ): List<MatchPreviewData> {

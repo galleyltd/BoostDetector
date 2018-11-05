@@ -1,7 +1,7 @@
-package com.github.galleyltd.boost.opendota.http
+package com.github.galleyltd.boost.domain.opendota.http
 
 import com.fasterxml.jackson.databind.DeserializationFeature
-import com.github.galleyltd.boost.service.ExecutionCounter
+import com.github.galleyltd.boost.domain.util.ExecutionCounter
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.JacksonSerializer
