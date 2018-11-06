@@ -14,8 +14,8 @@ class AnalysisServiceTest {
 
     private fun requestTestMatches(ids: List<String>): List<MatchData> {
         val matches = mutableListOf<MatchData>()
-        for (id in ids) {
-            runBlocking {
+        runBlocking {
+            for (id in ids) {
                 matches.add(openDotaApiClient.getMatchData(id))
             }
         }
