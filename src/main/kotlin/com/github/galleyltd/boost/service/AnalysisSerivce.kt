@@ -22,15 +22,10 @@ class SimpleAnalysisService : AnalysisSerivce {
     override fun accountFeedback(matches: List<MatchData>, accountId: Int): AccountFeedback {
         println()
         val xpmData = matches.map { it.players.first { it -> it.accountId == accountId }.xpPerMin }
-            .map { it -> it }
         val gpmData = matches.map { it.players.first { it -> it.accountId == accountId }.goldPerMin }
-            .map { it -> it }
         val kpmData = matches.map { it.players.first { it -> it.accountId == accountId }.killsPerMin }
-            .map { it -> it }
         val heroDamage = matches.map { it.players.first { it -> it.accountId == accountId }.heroDamage }
-            .map { it -> it }
         val kdaData = matches.map { it.players.first { it -> it.accountId == accountId }.kda }
-            .map { it -> it }
         val movingAverageXPM = xpmData.windowed(WINDOW_SIZE, STEP) { it.average() }
         val movingAverageGPM = gpmData.windowed(WINDOW_SIZE, STEP) { it.average() }
         val movingAverageKPM = kpmData.windowed(WINDOW_SIZE, STEP) { it.average() }
