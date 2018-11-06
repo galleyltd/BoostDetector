@@ -44,7 +44,10 @@ class SimpleAnalysisService : AnalysisSerivce {
         return AccountFeedback(
             accountId,
             relativeDifference(movingAverageXPM.max()!!, movingAverageXPM.min()!!) > DIFFERENCE,
-            relativeDifference(movingAverageGPM.max()!!, movingAverageGPM.min()!!) > DIFFERENCE
+            relativeDifference(movingAverageGPM.max()!!, movingAverageGPM.min()!!) > DIFFERENCE,
+            relativeDifference(movingAverageKPM.max()!!, movingAverageKPM.min()!!) > DIFFERENCE,
+            relativeDifference(movingAverageHD.max()!!, movingAverageHD.min()!!) > DIFFERENCE,
+            relativeDifference(movingAverageKDA.max()!!, movingAverageKDA.min()!!) > DIFFERENCE
         )
     }
 
