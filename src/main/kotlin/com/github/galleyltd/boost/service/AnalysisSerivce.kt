@@ -25,7 +25,6 @@ class SimpleAnalysisService : AnalysisSerivce {
     }
 
     override fun accountFeedback(matches: List<MatchData>, accountId: Int): AccountFeedback {
-        println()
         val xpmData = matches.map { it.players.first { it -> it.accountId == accountId }.xpPerMin }
         val gpmData = matches.map { it.players.first { it -> it.accountId == accountId }.goldPerMin }
         val kpmData = matches.map { it.players.first { it -> it.accountId == accountId }.killsPerMin }

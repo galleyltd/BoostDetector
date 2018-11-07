@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 class AnalysisServiceTest {
 
     private val service = SimpleAnalysisService()
+    private val objectMapper = jacksonObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
     @Test
     fun testWindowedAvg() {
@@ -39,14 +40,11 @@ class AnalysisServiceTest {
     }
 
     private fun readMatches(ids: List<String>): List<MatchData> {
-        val matches = mutableListOf<MatchData>()
-        for (id in ids) {
-            val l = jacksonObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).readValue(
-                this::class.java.classLoader.getResourceAsStream("$id.json").readBytes(),
+        return ids.map { it ->
+            objectMapper.readValue(
+                this::class.java.classLoader.getResourceAsStream("$it.json"),
                 MatchData::class.java
             )
-            matches.add(l)
         }
-        return matches
     }
 }
