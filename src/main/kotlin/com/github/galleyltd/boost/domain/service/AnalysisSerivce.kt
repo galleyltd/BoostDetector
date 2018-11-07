@@ -1,12 +1,10 @@
-package com.github.galleyltd.boost.service
+package com.github.galleyltd.boost.domain.service
 
-import com.github.galleyltd.boost.opendota.dto.MatchData
+import com.github.galleyltd.boost.domain.opendota.dto.MatchData
 import kotlin.math.abs
 
 interface AnalysisSerivce {
-
     fun accountFeedback(matches: List<MatchData>, accountId: Int): AccountFeedback
-
 }
 
 data class AccountFeedback(
@@ -15,7 +13,6 @@ data class AccountFeedback(
 )
 
 class SimpleAnalysisService : AnalysisSerivce {
-
     companion object {
         private val WINDOW_SIZE = 3
         private val STEP = 1
@@ -52,5 +49,4 @@ class SimpleAnalysisService : AnalysisSerivce {
             relativeDifference(movingAverageKDA.max()!!, movingAverageKDA.min()!!) > DIFFERENCE
         )
     }
-
 }

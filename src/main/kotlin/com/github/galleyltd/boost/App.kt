@@ -27,9 +27,7 @@ import org.slf4j.event.Level
 data class PlayerChecksRequest(val playerId: Long)
 
 private val koinContainer = KoinContainer().also { it.init() }
-private val redisStorageClient = koinContainer.redisStorageClient
 private val boostDetectionService = koinContainer.boostDetectionService
-private val analysisSerivce = koinContainer.analysisService
 private val port = koinContainer.port
 
 fun main() {

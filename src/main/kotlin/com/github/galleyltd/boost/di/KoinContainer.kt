@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.galleyltd.boost.domain.opendota.http.HttpClientFactory
 import com.github.galleyltd.boost.domain.opendota.http.OpenDotaApiClient
-import com.github.galleyltd.boost.service.AnalysisSerivce
+import com.github.galleyltd.boost.domain.service.AnalysisSerivce
 import com.github.galleyltd.boost.domain.service.BoostDetectionService
+import com.github.galleyltd.boost.domain.service.SimpleAnalysisService
 import com.github.galleyltd.boost.domain.util.ExecutionCounter
-import com.github.galleyltd.boost.service.SimpleAnalysisService
 import com.github.galleyltd.boost.storage.RedisStorageClient
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
