@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.galleyltd.boost.opendota.http.HttpClientFactory
 import com.github.galleyltd.boost.opendota.http.OpenDotaApiClient
+import com.github.galleyltd.boost.service.AnalysisSerivce
 import com.github.galleyltd.boost.service.ExecutionCounter
+import com.github.galleyltd.boost.service.SimpleAnalysisService
 import com.github.galleyltd.boost.storage.RedisStorageClient
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
@@ -20,6 +22,9 @@ private val appModule = module {
         single { ExecutionCounter() }
         single { HttpClientFactory(get()) }
         single { OpenDotaApiClient(get()) }
+    }
+    module("analysis") {
+        single { SimpleAnalysisService() as AnalysisSerivce }
     }
     module("storage") {
         single {
@@ -38,6 +43,7 @@ class KoinContainer : KoinComponent {
         StandAloneContext.startKoin(listOf(appModule))
     }
 
+    val analysisService by inject<AnalysisSerivce>()
     val redisStorageClient by inject<RedisStorageClient>()
     val openDotaApiClient by inject<OpenDotaApiClient>()
     val port: Int = config.property("ktor.deployment.port").getString().toInt()

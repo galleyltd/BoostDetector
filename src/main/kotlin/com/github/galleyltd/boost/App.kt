@@ -26,6 +26,7 @@ data class MatchDataRequest(val matchId: String)
 private val koinContainer = KoinContainer().also { it.init() }
 private val redisStorageClient = koinContainer.redisStorageClient
 private val openDotaApiClient = koinContainer.openDotaApiClient
+private val analysisSerivce = koinContainer.analysisService
 private val port = koinContainer.port
 
 fun main() {
