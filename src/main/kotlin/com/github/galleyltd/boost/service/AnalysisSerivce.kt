@@ -16,9 +16,11 @@ data class AccountFeedback(
 
 class SimpleAnalysisService : AnalysisSerivce {
 
-    private val WINDOW_SIZE = 3
-    private val STEP = 1
-    private val DIFFERENCE = 0.2
+    companion object {
+        private val WINDOW_SIZE = 3
+        private val STEP = 1
+        private val DIFFERENCE = 0.2
+    }
 
     private fun relativeDifference(v1: Double, v2: Double): Double {
         return abs(v1 - v2) / ((v1 + v2) / 2.0)
