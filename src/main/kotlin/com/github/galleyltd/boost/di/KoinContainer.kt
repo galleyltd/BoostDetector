@@ -6,7 +6,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.galleyltd.boost.domain.api.http.ApiClient
 import com.github.galleyltd.boost.domain.api.http.HttpClientFactory
 import com.github.galleyltd.boost.domain.service.*
-import com.github.galleyltd.boost.domain.util.ExecutionCounter
 import com.github.galleyltd.boost.storage.RedisStorageClient
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
@@ -23,8 +22,7 @@ private val appModule = module {
             .registerModule(JavaTimeModule())
     }
     single { BoostDetectionService(get(), get()) }
-    single { ExecutionCounter() }
-    single { HttpClientFactory(get()) }
+    single { HttpClientFactory() }
     single { ApiClient(get()) }
     single {
         val redisHost = System.getenv("REDIS_HOST") ?: "localhost"

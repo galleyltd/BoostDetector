@@ -16,7 +16,7 @@ class ApiClient(private val httpClientFactory: HttpClientFactory) {
         private val log = LoggerFactory.getLogger(this::class.java)
     }
 
-    private var httpClient: HttpClient = httpClientFactory.nextHttpClient()
+    private var httpClient: HttpClient = httpClientFactory.getNextClient()
 
     suspend fun getMatchData(matchId: Long): MatchData {
         return performApiCall {
@@ -42,7 +42,7 @@ class ApiClient(private val httpClientFactory: HttpClientFactory) {
             } catch (e: Exception) {
                 if (shouldSwitchProxy(e)) {
                     log.info("Changing proxy, exception = {}, msg = {}", e.javaClass.name, e.message)
-                    httpClient = httpClientFactory.nextHttpClient()
+                    httpClient = httpClientFactory.getNextClient()
                 } else {
                     throw e
                 }
