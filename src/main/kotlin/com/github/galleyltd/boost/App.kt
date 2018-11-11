@@ -23,8 +23,8 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import org.slf4j.event.Level
 
-@Location("/player/{playerId}/checks")
-data class PlayerChecksRequest(val playerId: Long)
+@Location("/accounts/{accountId}/checks")
+data class ChecksRequest(val accountId: Long)
 
 private val koinContainer = KoinContainer().also { it.init() }
 private val boostDetectionService = koinContainer.boostDetectionService
@@ -57,11 +57,11 @@ fun Application.boostDetectorModule() {
         }
     }
     routing {
-        get<PlayerChecksRequest> {
-            call.respond(boostDetectionService.getPlayerChecks(it.playerId))
+        get<ChecksRequest> {
+            call.respond(boostDetectionService.getAccountChecks(it.accountId))
         }
-        post<PlayerChecksRequest> {
-            call.respond(boostDetectionService.submitPlayerCheck(it.playerId))
+        post<ChecksRequest> {
+            call.respond(boostDetectionService.submitAccountCheck(it.accountId))
         }
     }
 

@@ -1,20 +1,19 @@
 package com.github.galleyltd.boost.domain
 
+import com.github.galleyltd.boost.domain.service.AccountFeedback
 import java.time.Instant
 
 data class CheckResult(
-    val checkDate: Instant,
-    val status: Status
+    val accountFeedback: AccountFeedback,
+    val checkDate: Instant = Instant.now()
 )
 
-data class PlayerChecks(
-    val checkResults: List<CheckResult>
-)
-
-enum class Status {
-    CHECK_IN_PROGRESS,
-    SUSPICIOUS,
-    CLEAN
+data class AccountChecks(
+    val checkResults: MutableList<CheckResult> = mutableListOf()
+) {
+    fun appendCheck(accountFeedback: AccountFeedback) {
+        checkResults.add(CheckResult(accountFeedback))
+    }
 }
 
 enum class SubmitResult {

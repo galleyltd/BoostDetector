@@ -2,7 +2,7 @@ package com.github.galleyltd.boost.service
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.github.galleyltd.boost.domain.opendota.dto.MatchData
+import com.github.galleyltd.boost.domain.api.dto.MatchData
 import com.github.galleyltd.boost.domain.service.SimpleAnalysisService
 import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.Test

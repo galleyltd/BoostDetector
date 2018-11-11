@@ -3,7 +3,6 @@ package com.github.galleyltd.boost.storage
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.lettuce.core.RedisClient
 import io.lettuce.core.api.StatefulRedisConnection
-import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 
 class RedisStorageClient(
     private val client: RedisClient,
@@ -12,17 +11,12 @@ class RedisStorageClient(
     @PublishedApi
     internal lateinit var connection: StatefulRedisConnection<String, String>
 
-    @PublishedApi
-    internal lateinit var pubSubConnection: StatefulRedisPubSubConnection<String, String>
-
     fun connect() {
         connection = client.connect()
-        pubSubConnection = client.connectPubSub()
     }
 
     fun disconnect() {
         connection.close()
-        pubSubConnection.close()
         client.shutdown()
     }
 

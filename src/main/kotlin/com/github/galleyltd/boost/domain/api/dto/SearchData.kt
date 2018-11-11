@@ -1,4 +1,4 @@
-package com.github.galleyltd.boost.domain.opendota.dto
+package com.github.galleyltd.boost.domain.api.dto
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty

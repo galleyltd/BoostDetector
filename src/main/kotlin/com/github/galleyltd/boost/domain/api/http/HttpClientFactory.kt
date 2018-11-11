@@ -1,4 +1,4 @@
-package com.github.galleyltd.boost.domain.opendota.http
+package com.github.galleyltd.boost.domain.api.http
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.github.galleyltd.boost.domain.util.ExecutionCounter

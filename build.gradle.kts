@@ -70,6 +70,8 @@ dependencies {
 
     implementation("org.koin", "koin-ktor", koinKtorVersion)
 
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.2")
+
     implementation("io.lettuce", "lettuce-core", lettuceVersion)
     implementation("ch.qos.logback", "logback-classic", logbackVersion)
 
