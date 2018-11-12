@@ -6,6 +6,8 @@ import com.github.galleyltd.boost.domain.util.NotFoundException
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
+private const val MINUTES_SINCE_LAST_CHECK = 15L
+
 class BoostDetectionService(
     private val dataService: DataService,
     private val queueService: InMemoryQueueService
@@ -29,7 +31,7 @@ class BoostDetectionService(
             if (checkResults.isNullOrEmpty()) {
                 return true
             }
-            val nowMinusShift = Instant.now().minusSeconds(TimeUnit.MINUTES.toSeconds(15))
+            val nowMinusShift = Instant.now().minusSeconds(TimeUnit.MINUTES.toSeconds(MINUTES_SINCE_LAST_CHECK))
             val latestCheckDate = checkResults[0].checkDate
             return latestCheckDate.isBefore(nowMinusShift)
         } catch (e: NotFoundException) {
