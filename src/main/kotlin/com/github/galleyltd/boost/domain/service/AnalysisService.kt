@@ -1,21 +1,22 @@
-package com.github.galleyltd.boost.service
+package com.github.galleyltd.boost.domain.service
 
-import com.github.galleyltd.boost.opendota.dto.MatchData
+import com.github.galleyltd.boost.domain.api.dto.MatchData
 import kotlin.math.abs
 
-interface AnalysisSerivce {
-
-    fun accountFeedback(matches: List<MatchData>, accountId: Int): AccountFeedback
-
+interface AnalysisService {
+    fun accountFeedback(matches: List<MatchData>, accountId: Long): AccountFeedback
 }
 
 data class AccountFeedback(
-    val accountId: Int, val xpmSpike: Boolean = false, val gpmSpike: Boolean = false, val kpmSpike: Boolean = false,
-    val heroDamageSpike: Boolean = false, val kdaSpike: Boolean = false
+    val accountId: Long,
+    val xpmSpike: Boolean = false,
+    val gpmSpike: Boolean = false,
+    val kpmSpike: Boolean = false,
+    val heroDamageSpike: Boolean = false,
+    val kdaSpike: Boolean = false
 )
 
-class SimpleAnalysisService : AnalysisSerivce {
-
+class SimpleAnalysisService : AnalysisService {
     companion object {
         private val WINDOW_SIZE = 3
         private val STEP = 1
@@ -26,7 +27,7 @@ class SimpleAnalysisService : AnalysisSerivce {
         return abs(v1 - v2) / ((v1 + v2) / 2.0)
     }
 
-    override fun accountFeedback(matches: List<MatchData>, accountId: Int): AccountFeedback {
+    override fun accountFeedback(matches: List<MatchData>, accountId: Long): AccountFeedback {
         val xpmData = matches.map { it.players.first { it -> it.accountId == accountId }.xpPerMin }
         val gpmData = matches.map { it.players.first { it -> it.accountId == accountId }.goldPerMin }
         val kpmData = matches.map { it.players.first { it -> it.accountId == accountId }.killsPerMin }
@@ -52,5 +53,4 @@ class SimpleAnalysisService : AnalysisSerivce {
             relativeDifference(movingAverageKDA.max()!!, movingAverageKDA.min()!!) > DIFFERENCE
         )
     }
-
 }

@@ -1,4 +1,4 @@
-package com.github.galleyltd.boost.opendota.dto
+package com.github.galleyltd.boost.domain.api.dto
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -35,7 +35,7 @@ data class MatchData(
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class Player(
     @JsonProperty("match_id") val matchId: String,
-    @JsonProperty("account_id") val accountId: Int,
+    @JsonProperty("account_id") val accountId: Long,
     @JsonProperty("additional_units") val additionalUnits: Any?,
     @JsonProperty("assists") val assists: Int,
     @JsonProperty("backpack_0") val backpack0: Int,
