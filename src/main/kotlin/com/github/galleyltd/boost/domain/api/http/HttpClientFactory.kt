@@ -18,7 +18,7 @@ class HttpClientFactory {
             .bufferedReader()
             .useLines { it.toList() }
             .map {
-                val proxyDefinition = it.trim().split("\t")
+                val proxyDefinition = it.trim().replace("\\s+".toRegex(), " ").split(" ")
                 Pair(proxyDefinition[0], proxyDefinition[1].toInt())
             }
             .forEach {
