@@ -1,5 +1,6 @@
 # BoostDetector
 [![Build Status](https://travis-ci.com/galleyltd/boost-detector-backend.svg?branch=master)](https://travis-ci.com/galleyltd/boost-detector-backend)
+[![codecov](https://codecov.io/gh/galleyltd/boost-detector-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/galleyltd/boost-detector-backend)
 
 ### Startup with Redis in Docker container
 ```bash
