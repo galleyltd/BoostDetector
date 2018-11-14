@@ -71,7 +71,9 @@ dependencies {
 
     implementation("io.ktor", "ktor-server-netty", ktorVersion)
     implementation("io.ktor", "ktor-server-core", ktorVersion)
-    implementation("io.ktor", "ktor-locations", ktorVersion)
+    implementation("io.ktor", "ktor-locations", ktorVersion) {
+        exclude("io.ktor", "ktor-auth")
+    }
     implementation("io.ktor", "ktor-jackson", ktorVersion)
     implementation("io.ktor", "ktor-client-apache", ktorVersion)
     implementation("io.ktor", "ktor-client-jackson", ktorVersion)
@@ -83,7 +85,9 @@ dependencies {
     implementation("io.lettuce", "lettuce-core", lettuceVersion)
     implementation("ch.qos.logback", "logback-classic", logbackVersion)
 
-    testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit") as String) {
+        exclude("junit", "junit")
+    }
     testImplementation("com.natpryce", "hamkrest", hamkrestVersion)
     testImplementation("org.junit.jupiter", "junit-jupiter-api", junit5Version)
     testImplementation("org.junit.jupiter", "junit-jupiter-params", junit5Version)
