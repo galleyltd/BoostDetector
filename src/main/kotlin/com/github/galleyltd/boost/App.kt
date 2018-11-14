@@ -61,7 +61,8 @@ fun Application.boostDetectorModule() {
             call.respond(boostDetectionService.getAccountChecks(it.accountId))
         }
         post<ChecksRequest> {
-            call.respond(boostDetectionService.submitAccountCheck(it.accountId))
+            boostDetectionService.submitAccountCheck(it.accountId)
+            call.respond(HttpStatusCode.Accepted)
         }
     }
 
