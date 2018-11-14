@@ -15,6 +15,7 @@ apply(plugin = "com.github.johnrengelman.shadow")
 plugins {
     application
     kotlin("jvm") version "1.3.0"
+    jacoco
 }
 
 group = "com.github.galleyltd.boost"
@@ -40,6 +41,13 @@ tasks.withType<Test> {
     }
     testLogging {
         events("passed", "skipped", "failed")
+    }
+}
+
+tasks.withType<JacocoReport> {
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = false
     }
 }
 

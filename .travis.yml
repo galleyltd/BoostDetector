@@ -19,7 +19,11 @@ before_install:
   - chmod +x deploy-k8s.sh
 
 script:
-  - ./gradlew test build
+- ./gradlew test jacocoTestReport
+- ./gradlew build
+
+after_script:
+- bash <(curl -s https://codecov.io/bash)
 
 deploy:
   - provider: script
