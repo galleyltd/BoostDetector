@@ -36,7 +36,38 @@ class SimpleAnalysisService : AnalysisService {
         private const val DIFF = 0.2
         private const val BIG_DIFF = 0.30
         private val ITEMS_TO_LOOK_FOR = listOf(
-            1, 48, 79, 90, 96, 98, 102, 250, 116, 119, 127, 147, 151, 156, 172, 210, 220, 225, 231, 242, 249, 263
+            1, // blink
+            48, //travel
+            79, // meka
+            90, // pipe
+            96, // hex
+            98, // orchid
+            102, // force
+            116, // bkb
+            119, // shiva
+            127, // blademail
+            147, // manta
+            151, // armlet
+            152, //lotar
+            156, // satanic
+            172, // mom
+            174, //diffusal
+            176, //eblade
+            190, //veil
+            206, // atos
+            208, //abysal
+            210, // halberd
+            220, // travel2
+            223, //meteor
+            225, // nullifier
+            226, // lotus
+            229, //solar
+            231, // greaves
+            242, // crimson
+            249, // silver
+            250, // bloodthorn
+            263,  // pike
+            267 //vessel
         )
     }
 
@@ -49,7 +80,7 @@ class SimpleAnalysisService : AnalysisService {
         moving: List<Number>
     ): Float {
         val zippedData = data.zip(listOf(data[0]) + moving)
-        val isSpikeList = zippedData.map { it -> relativeDifference(it.first.toDouble(), it.second.toDouble()) > DIFF }
+        val isSpikeList = zippedData.map { relativeDifference(it.first.toDouble(), it.second.toDouble()) > DIFF }
         return isSpikeList.count { it }.toFloat() / isSpikeList.size
     }
 
@@ -61,7 +92,7 @@ class SimpleAnalysisService : AnalysisService {
 
     override fun accountFeedback(matches: List<MatchData>, accountId: Long): AccountFeedback {
 
-        val playerMatches = matches.map { it.players.first { it -> it.accountId == accountId } }
+        val playerMatches = matches.map { it.players.first { it.accountId == accountId } }
 
         // get items in inventory
         val item0 = playerMatches.map { it.item0 }
@@ -89,7 +120,7 @@ class SimpleAnalysisService : AnalysisService {
                 item5.count { it == item }.toFloat() / total
             )
         }
-        val sortedItems = distributionPerItem.filter { it -> it.total > 0 }.sortedByDescending { it -> it.total }
+        val sortedItems = distributionPerItem.filter { it.total > 0 }.sortedByDescending { it.total }
 
 
         val xpmData = playerMatches.map { it.xpPerMin }
