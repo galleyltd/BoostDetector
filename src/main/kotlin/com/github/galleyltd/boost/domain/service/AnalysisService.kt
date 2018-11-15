@@ -92,7 +92,7 @@ class SimpleAnalysisService : AnalysisService {
 
     override fun accountFeedback(matches: List<MatchData>, accountId: Long): AccountFeedback {
 
-        val playerMatches = matches.map { it.players.first { it.accountId == accountId } }
+        val playerMatches = matches.map { match -> match.players.first { it.accountId == accountId } }
 
         // get items in inventory
         val item0 = playerMatches.map { it.item0 }
@@ -123,17 +123,17 @@ class SimpleAnalysisService : AnalysisService {
         val sortedItems = distributionPerItem.filter { it.total > 0 }.sortedByDescending { it.total }
 
 
-        val xpmData = playerMatches.map { it.xpPerMin }
-        val gpmData = playerMatches.map { it.goldPerMin }
+        val xpmData = playerMatches.map { it.xpPerMin.toDouble() }
+        val gpmData = playerMatches.map { it.goldPerMin.toDouble() }
         val kpmData = playerMatches.map { it.killsPerMin }
-        val heroDamage = playerMatches.map { it.heroDamage }
-        val kdaData = playerMatches.map { it.kda }
+        val heroDamage = playerMatches.map { it.heroDamage.toDouble() }
+        val kdaData = playerMatches.map { it.kda.toDouble() }
 
-        val movingAverageXPM = xpmData.windowed(WINDOW_SIZE, STEP) { it.average() }
-        val movingAverageGPM = gpmData.windowed(WINDOW_SIZE, STEP) { it.average() }
-        val movingAverageKPM = kpmData.windowed(WINDOW_SIZE, STEP) { it.average() }
-        val movingAverageHD = heroDamage.windowed(WINDOW_SIZE, STEP) { it.average() }
-        val movingAverageKDA = kdaData.windowed(WINDOW_SIZE, STEP) { it.average() }
+        val movingAverageXPM = xpmData.customAvg()
+        val movingAverageGPM = gpmData.customAvg()
+        val movingAverageKPM = kpmData.customAvg()
+        val movingAverageHD = heroDamage.customAvg()
+        val movingAverageKDA = kdaData.customAvg()
 
         return AccountFeedback(
             accountId,
@@ -145,5 +145,11 @@ class SimpleAnalysisService : AnalysisService {
             analyzeItems(sortedItems)
         )
     }
+
+
+    private fun List<Double>.customAvg(): List<Double> {
+        return this.windowed(WINDOW_SIZE, STEP) { it.average() }
+    }
+
 
 }
