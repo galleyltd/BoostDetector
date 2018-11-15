@@ -129,11 +129,11 @@ class SimpleAnalysisService : AnalysisService {
         val heroDamage = playerMatches.map { it.heroDamage.toDouble() }
         val kdaData = playerMatches.map { it.kda.toDouble() }
 
-        val movingAverageXPM = xpmData.customAvg()
-        val movingAverageGPM = gpmData.customAvg()
-        val movingAverageKPM = kpmData.customAvg()
-        val movingAverageHD = heroDamage.customAvg()
-        val movingAverageKDA = kdaData.customAvg()
+        val movingAverageXPM = xpmData.windowedAvg()
+        val movingAverageGPM = gpmData.windowedAvg()
+        val movingAverageKPM = kpmData.windowedAvg()
+        val movingAverageHD = heroDamage.windowedAvg()
+        val movingAverageKDA = kdaData.windowedAvg()
 
         return AccountFeedback(
             accountId,
@@ -147,9 +147,7 @@ class SimpleAnalysisService : AnalysisService {
     }
 
 
-    private fun List<Double>.customAvg(): List<Double> {
+    private fun List<Double>.windowedAvg(): List<Double> {
         return this.windowed(WINDOW_SIZE, STEP) { it.average() }
     }
-
-
 }
