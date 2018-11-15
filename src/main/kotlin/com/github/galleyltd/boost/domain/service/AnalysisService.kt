@@ -50,7 +50,6 @@ class SimpleAnalysisService : AnalysisService {
     ): Float {
         val zippedData = data.zip(listOf(data[0]) + moving)
         val isSpike = zippedData.map { it -> relativeDifference(it.first.toDouble(), it.second.toDouble()) > DIFF }
-        println()
         return isSpike.count { it }.toFloat() / isSpike.size
     }
 
@@ -62,38 +61,38 @@ class SimpleAnalysisService : AnalysisService {
 
     override fun accountFeedback(matches: List<MatchData>, accountId: Long): AccountFeedback {
         // get items in inventory
-        val item0 = matches.map { it.players.first { it -> it.accountId == accountId }.item0 }
-        val item1 = matches.map { it.players.first { it -> it.accountId == accountId }.item1 }
-        val item2 = matches.map { it.players.first { it -> it.accountId == accountId }.item2 }
-        val item3 = matches.map { it.players.first { it -> it.accountId == accountId }.item3 }
-        val item4 = matches.map { it.players.first { it -> it.accountId == accountId }.item4 }
-        val item5 = matches.map { it.players.first { it -> it.accountId == accountId }.item5 }
+        val item0 = matches.map { getPlayer(it, accountId).item0 }
+        val item1 = matches.map { getPlayer(it, accountId).item1 }
+        val item2 = matches.map { getPlayer(it, accountId).item2 }
+        val item3 = matches.map { getPlayer(it, accountId).item3 }
+        val item4 = matches.map { getPlayer(it, accountId).item4 }
+        val item5 = matches.map { getPlayer(it, accountId).item5 }
 
         val distributionPerItem = ITEMS_TO_LOOK_FOR.map { item ->
-            val total = item0.count { it -> it == item } +
-                    item1.count { it -> it == item } +
-                    item2.count { it -> it == item } +
-                    item3.count { it -> it == item } +
-                    item4.count { it -> it == item } +
-                    item5.count { it -> it == item }
+            val total = item0.count { it == item } +
+                    item1.count { it == item } +
+                    item2.count { it == item } +
+                    item3.count { it == item } +
+                    item4.count { it == item } +
+                    item5.count { it == item }
             InventoryDistribution(
                 item,
                 total,
-                item0.count { it -> it == item }.toFloat() / total,
-                item1.count { it -> it == item }.toFloat() / total,
-                item2.count { it -> it == item }.toFloat() / total,
-                item3.count { it -> it == item }.toFloat() / total,
-                item4.count { it -> it == item }.toFloat() / total,
-                item5.count { it -> it == item }.toFloat() / total
+                item0.count { it == item }.toFloat() / total,
+                item1.count { it == item }.toFloat() / total,
+                item2.count { it == item }.toFloat() / total,
+                item3.count { it == item }.toFloat() / total,
+                item4.count { it == item }.toFloat() / total,
+                item5.count { it == item }.toFloat() / total
             )
         }
         val sortedItems = distributionPerItem.filter { it -> it.total > 0 }.sortedBy { it -> -it.total }
 
-        val xpmData = matches.map { it.players.first { it -> it.accountId == accountId }.xpPerMin }
-        val gpmData = matches.map { it.players.first { it -> it.accountId == accountId }.goldPerMin }
-        val kpmData = matches.map { it.players.first { it -> it.accountId == accountId }.killsPerMin }
-        val heroDamage = matches.map { it.players.first { it -> it.accountId == accountId }.heroDamage }
-        val kdaData = matches.map { it.players.first { it -> it.accountId == accountId }.kda }
+        val xpmData = matches.map { getPlayer(it, accountId).xpPerMin }
+        val gpmData = matches.map { getPlayer(it, accountId).goldPerMin }
+        val kpmData = matches.map { getPlayer(it, accountId).killsPerMin }
+        val heroDamage = matches.map { getPlayer(it, accountId).heroDamage }
+        val kdaData = matches.map { getPlayer(it, accountId).kda }
 
         val movingAverageXPM = xpmData.windowed(WINDOW_SIZE, STEP) { it.average() }
         val movingAverageGPM = gpmData.windowed(WINDOW_SIZE, STEP) { it.average() }
@@ -111,4 +110,9 @@ class SimpleAnalysisService : AnalysisService {
             analyzeItems(sortedItems)
         )
     }
+
+    private fun getPlayer(
+        it: MatchData,
+        accountId: Long
+    ) = it.players.first { it -> it.accountId == accountId }
 }
