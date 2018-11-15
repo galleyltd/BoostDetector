@@ -28,15 +28,17 @@ class AnalysisServiceTest {
                 "4174586560",
                 "4174904803",
                 "4176511736",
-                "4176574180"
+                "4176574180",
+                "4218437831",
+                "4218495354"
             )
         )
         val feedback = service.accountFeedback(matches, 116894024)
-        assertTrue(feedback.xpmSpike)
-        assertTrue(feedback.gpmSpike)
-        assertTrue(feedback.kdaSpike)
-        assertTrue(feedback.kpmSpike)
-        assertTrue(feedback.heroDamageSpike)
+        assertTrue(feedback.xpmSpike < 0.5)
+        assertTrue(feedback.gpmSpike < 0.5)
+        assertTrue(feedback.kdaSpike > 0.5)
+        assertTrue(feedback.kpmSpike > 0.5)
+        assertTrue(feedback.heroDamageSpike > 0.5)
     }
 
     private fun readMatches(ids: List<String>): List<MatchData> {
