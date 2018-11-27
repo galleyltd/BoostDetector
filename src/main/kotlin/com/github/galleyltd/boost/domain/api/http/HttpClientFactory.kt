@@ -36,6 +36,8 @@ class HttpClientFactory {
     private fun constructHttpClient(isProxy: Boolean, proxyDefinition: Pair<String, Int>): HttpClient {
         return HttpClient(Apache) {
             engine {
+                connectTimeout = 1000
+                socketTimeout = 4000
                 customizeClient {
                     if (isProxy) setProxy(HttpHost(proxyDefinition.first, proxyDefinition.second))
                     setMaxConnPerRoute(10)
