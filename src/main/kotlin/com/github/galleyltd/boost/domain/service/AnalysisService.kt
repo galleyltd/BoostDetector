@@ -1,6 +1,7 @@
 package com.github.galleyltd.boost.domain.service
 
 import com.github.galleyltd.boost.domain.api.dto.MatchData
+import org.slf4j.LoggerFactory
 import kotlin.math.abs
 
 interface AnalysisService {
@@ -14,6 +15,7 @@ data class AccountFeedback(
     val kpmSpike: Float = 0.0f,
     val heroDamageSpike: Float = 0.0f,
     val kdaSpike: Float = 0.0f,
+    val apmSpike: Float = 0.0f,
     val itemsSpike: Float = 0.0f
 )
 
@@ -30,11 +32,10 @@ data class InventoryDistribution(
 
 class SimpleAnalysisService : AnalysisService {
     companion object {
-        private const val WINDOW_SIZE = 2
-        private const val STEP = 1
-        private const val SMALL_DIFF = 0.1
         private const val DIFF = 0.2
-        private const val BIG_DIFF = 0.30
+        private const val ALPHA = 0.4
+        private const val ITEM_DIFF = 0.9
+        private val log = LoggerFactory.getLogger(this::class.java)
         private val ITEMS_TO_LOOK_FOR = listOf(
             1, // blink
             48, //travel
@@ -66,6 +67,7 @@ class SimpleAnalysisService : AnalysisService {
             242, // crimson
             249, // silver
             250, // bloodthorn
+            254, //glimmer
             263,  // pike
             267 //vessel
         )
@@ -85,22 +87,36 @@ class SimpleAnalysisService : AnalysisService {
     }
 
     private fun analyzeItems(sortedItems: List<InventoryDistribution>): Float {
-        // TODO produce metrics, saying how spiky items location are
-        return 0.0f
+        val filtered =
+            sortedItems.filter { it.item == 1 || it.item == 116 || it.item == 102 || it.item == 263 || it.item == 48 || it.item == 254 || it.item == 220 }
+        val itemSpike = filtered.count { it ->
+            (it.slot0 < ITEM_DIFF && it.slot0 > 0.0) ||
+                    (it.slot1 < ITEM_DIFF && it.slot1 > 0.0) ||
+                    (it.slot2 < ITEM_DIFF && it.slot2 > 0.0) ||
+                    (it.slot3 < ITEM_DIFF && it.slot3 > 0.0) ||
+                    (it.slot4 < ITEM_DIFF && it.slot4 > 0.0) ||
+                    (it.slot5 < ITEM_DIFF && it.slot5 > 0.0)
+        }.toFloat() / filtered.size
+        log.info(filtered.toString())
+        return itemSpike
     }
 
 
     override fun accountFeedback(matches: List<MatchData>, accountId: Long): AccountFeedback {
 
-        val playerMatches = matches.map { match -> match.players.first { it.accountId == accountId } }
+        val wonMatches =
+            matches.map { match -> match.players.first { it.accountId == accountId } }.filter { it.win == 1 }
+
+        val lostMatches =
+            matches.map { match -> match.players.first { it.accountId == accountId } }.filter { it.win == 0 }
 
         // get items in inventory
-        val item0 = playerMatches.map { it.item0 }
-        val item1 = playerMatches.map { it.item1 }
-        val item2 = playerMatches.map { it.item2 }
-        val item3 = playerMatches.map { it.item3 }
-        val item4 = playerMatches.map { it.item4 }
-        val item5 = playerMatches.map { it.item5 }
+        val item0 = wonMatches.map { it.item0 }
+        val item1 = wonMatches.map { it.item1 }
+        val item2 = wonMatches.map { it.item2 }
+        val item3 = wonMatches.map { it.item3 }
+        val item4 = wonMatches.map { it.item4 }
+        val item5 = wonMatches.map { it.item5 }
 
         val distributionPerItem = ITEMS_TO_LOOK_FOR.map { item ->
             val total = item0.count { it == item } +
@@ -122,18 +138,19 @@ class SimpleAnalysisService : AnalysisService {
         }
         val sortedItems = distributionPerItem.filter { it.total > 0 }.sortedByDescending { it.total }
 
+        val xpmData = wonMatches.map { it.xpPerMin.toDouble() }
+        val gpmData = wonMatches.map { it.goldPerMin.toDouble() }
+        val kpmData = wonMatches.map { it.killsPerMin }
+        val apmData = wonMatches.map { it.actionsPerMin }
+        val heroDamage = wonMatches.map { it.heroDamage.toDouble() }
+        val kdaData = wonMatches.map { it.kda.toDouble() }
 
-        val xpmData = playerMatches.map { it.xpPerMin.toDouble() }
-        val gpmData = playerMatches.map { it.goldPerMin.toDouble() }
-        val kpmData = playerMatches.map { it.killsPerMin }
-        val heroDamage = playerMatches.map { it.heroDamage.toDouble() }
-        val kdaData = playerMatches.map { it.kda.toDouble() }
-
-        val movingAverageXPM = xpmData.windowedAvg()
-        val movingAverageGPM = gpmData.windowedAvg()
-        val movingAverageKPM = kpmData.windowedAvg()
-        val movingAverageHD = heroDamage.windowedAvg()
-        val movingAverageKDA = kdaData.windowedAvg()
+        val movingAverageXPM = xpmData.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
+        val movingAverageGPM = gpmData.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
+        val movingAverageKPM = kpmData.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
+        val movingAverageHD = heroDamage.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
+        val movingAverageKDA = kdaData.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
+        val movingAverageAPM = apmData.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
 
         return AccountFeedback(
             accountId,
@@ -142,12 +159,8 @@ class SimpleAnalysisService : AnalysisService {
             analyzeMoving(kpmData, movingAverageKPM),
             analyzeMoving(heroDamage, movingAverageHD),
             analyzeMoving(kdaData, movingAverageKDA),
+            analyzeMoving(apmData, movingAverageAPM),
             analyzeItems(sortedItems)
         )
-    }
-
-
-    private fun List<Double>.windowedAvg(): List<Double> {
-        return this.windowed(WINDOW_SIZE, STEP) { it.average() }
     }
 }
