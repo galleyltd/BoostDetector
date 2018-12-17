@@ -2,7 +2,6 @@ package com.github.galleyltd.boost.domain.service
 
 import com.github.galleyltd.boost.domain.api.dto.MatchData
 import org.slf4j.LoggerFactory
-import kotlin.math.abs
 
 interface AnalysisService {
     fun accountFeedback(matches: List<MatchData>, accountId: Long): AccountFeedback
@@ -16,6 +15,8 @@ data class AccountFeedback(
     val heroDamageSpike: Float = 0.0f,
     val kdaSpike: Float = 0.0f,
     val apmSpike: Float = 0.0f,
+    val lhpmSpike: Float = 0.0f,
+    val dpmSpike: Float = 0.0f,
     val itemsSpike: Float = 0.0f
 )
 
@@ -74,7 +75,7 @@ class SimpleAnalysisService : AnalysisService {
     }
 
     private fun relativeDifference(v1: Double, v2: Double): Double {
-        return abs(v1 - v2) / v2
+        return (v1 - v2) / v2
     }
 
     private fun analyzeMoving(
@@ -104,19 +105,23 @@ class SimpleAnalysisService : AnalysisService {
 
     override fun accountFeedback(matches: List<MatchData>, accountId: Long): AccountFeedback {
 
-        val wonMatches =
-            matches.map { match -> match.players.first { it.accountId == accountId } }.filter { it.win == 1 }
+        val lengthOfMatches = matches.map { it.duration }
 
-        val lostMatches =
-            matches.map { match -> match.players.first { it.accountId == accountId } }.filter { it.win == 0 }
+        val listOfMatches =
+            matches.map { match -> match.players.first { it.accountId == accountId } }.zip(lengthOfMatches)
+//                .filter { it.win == 1 }
+
+        val wonMatches = listOfMatches.filter { it.first.win == 1 }
+
+        val lostMatches = listOfMatches.filter { it.first.win == 0 }
 
         // get items in inventory
-        val item0 = wonMatches.map { it.item0 }
-        val item1 = wonMatches.map { it.item1 }
-        val item2 = wonMatches.map { it.item2 }
-        val item3 = wonMatches.map { it.item3 }
-        val item4 = wonMatches.map { it.item4 }
-        val item5 = wonMatches.map { it.item5 }
+        val item0 = wonMatches.map { it.first.item0 }
+        val item1 = wonMatches.map { it.first.item1 }
+        val item2 = wonMatches.map { it.first.item2 }
+        val item3 = wonMatches.map { it.first.item3 }
+        val item4 = wonMatches.map { it.first.item4 }
+        val item5 = wonMatches.map { it.first.item5 }
 
         val distributionPerItem = ITEMS_TO_LOOK_FOR.map { item ->
             val total = item0.count { it == item } +
@@ -138,12 +143,14 @@ class SimpleAnalysisService : AnalysisService {
         }
         val sortedItems = distributionPerItem.filter { it.total > 0 }.sortedByDescending { it.total }
 
-        val xpmData = wonMatches.map { it.xpPerMin.toDouble() }
-        val gpmData = wonMatches.map { it.goldPerMin.toDouble() }
-        val kpmData = wonMatches.map { it.killsPerMin }
-        val apmData = wonMatches.map { it.actionsPerMin }
-        val heroDamage = wonMatches.map { it.heroDamage.toDouble() }
-        val kdaData = wonMatches.map { it.kda.toDouble() }
+        val xpmData = wonMatches.map { it.first.xpPerMin.toDouble() }
+        val gpmData = wonMatches.map { it.first.goldPerMin.toDouble() }
+        val kpmData = wonMatches.map { it.first.killsPerMin }
+        val apmData = wonMatches.map { it.first.actionsPerMin }
+        val heroDamage = wonMatches.map { it.first.heroDamage.toDouble() / it.second.toDouble() }
+        val kdaData = wonMatches.map { it.first.kda.toDouble() }
+        val lhPerMin = wonMatches.map { it.first.lastHits.toDouble() / it.second.toDouble() }
+        val dnPerMin = wonMatches.map { it.first.denies.toDouble() / it.second.toDouble() }
 
         val movingAverageXPM = xpmData.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
         val movingAverageGPM = gpmData.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
@@ -151,6 +158,8 @@ class SimpleAnalysisService : AnalysisService {
         val movingAverageHD = heroDamage.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
         val movingAverageKDA = kdaData.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
         val movingAverageAPM = apmData.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
+        val movingAverageLHPM = lhPerMin.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
+        val movingAverageDPM = dnPerMin.zipWithNext().map { it -> ALPHA * it.first + (1.0f - ALPHA) * it.second }
 
         return AccountFeedback(
             accountId,
@@ -160,6 +169,8 @@ class SimpleAnalysisService : AnalysisService {
             analyzeMoving(heroDamage, movingAverageHD),
             analyzeMoving(kdaData, movingAverageKDA),
             analyzeMoving(apmData, movingAverageAPM),
+            analyzeMoving(lhPerMin, movingAverageLHPM),
+            analyzeMoving(dnPerMin, movingAverageDPM),
             analyzeItems(sortedItems)
         )
     }
